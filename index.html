@@ -140,8 +140,8 @@
   event.preventDefault();
 
   if (selectedRating === 0) {
-    ratingText.textContent =
-      "Please choose a rating first 🌸";
+    ratingText.textContent = "Please choose a rating first 🌸";
+    ratingText.classList.add("text-pink-500");
     return;
   }
 
@@ -158,6 +158,12 @@
   };
 
   try {
+    submitButton.disabled = true;
+
+    buttonText.innerHTML = `
+      <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+      Sending...
+    `;
 
     await fetch(SCRIPT_URL, {
       method: "POST",
@@ -165,13 +171,22 @@
       body: JSON.stringify(data)
     });
 
-    alert("Feedback sent!");
+    // No popup — show message inside the page instead
+    showStatus("Thank you! Your feedback has been sent successfully ♡", true);
+
+    // Reset form
+    form.reset();
+    setRating(0);
 
   } catch (error) {
-
     console.error(error);
-    alert("Something went wrong.");
 
+    // No popup here either
+    showStatus("Something went wrong. Please try again.", false);
+
+  } finally {
+    submitButton.disabled = false;
+    buttonText.innerHTML = defaultButton;
   }
 });
   </script>
